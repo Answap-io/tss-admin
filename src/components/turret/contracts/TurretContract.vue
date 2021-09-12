@@ -1,0 +1,66 @@
+<template>
+  <div>
+    <Card>
+      <h2>Upload contract</h2>
+      <form enctype="multipart/form-data">
+        <label for="contract">
+          <span class="block text-gray-700 text-sm font-bold mb-2">
+            Contract
+          </span>
+          <input
+            id="contract"
+            class="
+              shadow
+              appearance-none
+              border
+              rounded
+              w-full
+              py-2
+              px-3
+              text-gray-700
+              leading-tight
+              focus:outline-none focus:shadow-outline
+            "
+            type="file"
+            @change="loadContract"
+          />
+        </label>
+      </form>
+    </Card>
+  </div>
+</template>
+
+<script lang="ts">
+import { Options, Vue } from "vue-class-component";
+import Turret from "@/entities/Turret";
+import Card from "@/components/common/Card.vue";
+
+@Options({
+  components: { Card },
+  emits: ["loaded"],
+  props: {
+    turret: {
+      type: Turret,
+    },
+  },
+})
+export default class TurretContract extends Vue {
+  private contractCode = "";
+
+  loadContract(): void {
+    const file = (document.querySelector("#contract") as HTMLInputElement)
+      .files![0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = (evt) => {
+        this.contractCode = evt.target!.result!.toString();
+        this.$emit("loaded", this.contractCode);
+      };
+      reader.onerror = function (evt) {
+        console.error(evt);
+      };
+    }
+  }
+}
+</script>
