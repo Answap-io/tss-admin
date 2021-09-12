@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import HelloWorld from "@/components/TurretForm.vue";
+import HelloWorld from "@/components/turret/TurretForm.vue";
 
 describe("TurretForm.vue", () => {
   it("renders props.msg when passed", () => {

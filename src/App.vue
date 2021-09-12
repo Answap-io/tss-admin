@@ -1,29 +1,55 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link>
+  <div class="home m-10">
+    <TurretForm @loaded="setTurret" />
+
+    <Card>
+      <label for="private-key">
+        <span class="block text-gray-700 text-sm font-bold mb-2">
+          Private key
+        </span>
+        <input
+          id="private-key"
+          v-model="$store.state.privateKey"
+          class="
+            shadow
+            appearance-none
+            border
+            rounded
+            w-full
+            py-2
+            px-3
+            text-gray-700
+            leading-tight
+            focus:outline-none focus:shadow-outline
+          "
+          type="text"
+        />
+      </label>
+    </Card>
+    <div id="turret-ops">
+      <router-link to="/">Upload contract</router-link>
+    </div>
+    <router-view />
   </div>
-  <router-view />
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import { Options, Vue } from "vue-class-component";
+import TurretForm from "@/components/turret/TurretForm.vue";
+import Turret from "@/entities/Turret"; // @ is an alias to /src
+import Card from "@/components/common/Card.vue";
 
-#nav {
-  padding: 30px;
+@Options({
+  components: {
+    TurretForm,
+    Card,
+  },
+})
+export default class Home extends Vue {
+  private turret: Turret = Turret.createNull();
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+  setTurret(turret: Turret): void {
+    this.$store.commit("setTurret", turret);
   }
 }
-</style>
+</script>
