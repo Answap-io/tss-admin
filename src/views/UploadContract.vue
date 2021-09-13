@@ -14,7 +14,15 @@
             Byte length:<strong>{{ this.contract.txFunction.length }}</strong>
           </p>
           <p>
-            txFunctionFee (upload) amount :
+            fields upload fee:
+            <strong>{{ fieldsFee }}</strong>
+          </p>
+          <p>
+            contract length fee:
+            <strong>{{ contractLengthFee }}</strong>
+          </p>
+          <p>
+            total upload fee:
             <strong>{{ uploadFee }}</strong>
           </p>
           <p>txFunctionFee transaction xdr</p>
@@ -57,6 +65,14 @@ import Field from "@/entities/Contracts/Field";
           this.uploadFee = this.turret
             .calculateUploadFee(this.contract)
             .toFixed(7);
+
+          this.fieldsFee = this.turret
+            .calculateFieldsFee(this.contract)
+            .toFixed(7);
+
+          this.contractLengthFee = this.turret
+            .calculateContractLengthFee(this.contract)
+            .toFixed(7);
         } else {
           return "0";
         }
@@ -68,6 +84,8 @@ export default class UploadContract extends Vue {
   private turret: Turret = new Proxy<Turret>(Turret.createNull(), {});
   private contract: Contract = Contract.createNull();
   private uploadFee = "0";
+  private contractLengthFee = "0";
+  private fieldsFee = "0";
   private txFunctionFee = "";
 
   created(): void {
@@ -79,7 +97,6 @@ export default class UploadContract extends Vue {
   }
 
   handleFieldsUpdated(fields: Field[]): void {
-    console.log(fields);
     this.contract.txFunctionFields = fields;
   }
 
