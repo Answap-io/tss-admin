@@ -5,7 +5,7 @@ import IState from "@/store/IState";
 export default createStore<IState>({
   state: {
     turret: Turret.createNull(),
-    privateKey: "S...",
+    privateKey: process.env.VUE_APP_PRIVATE_KEY || "",
   },
   mutations: {
     setTurret(state: IState, turret: Turret): void {

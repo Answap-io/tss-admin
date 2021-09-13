@@ -30,7 +30,14 @@ export default class Turret {
   }
 
   public calculateUploadFee(contract: Contract): number {
-    return contract.txFunction.length / Number(this.divisor.upload);
+    const functionBuffer = Buffer.from(contract.txFunction);
+    const fieldsBuffer = Buffer.from(
+      JSON.stringify(contract.txFunctionFields),
+      "base64"
+    );
+
+    const concatenatedBuffer = Buffer.concat([functionBuffer, fieldsBuffer]);
+    return concatenatedBuffer.length / Number(this.divisor.upload);
   }
 
   public calculateRunFee(): number {

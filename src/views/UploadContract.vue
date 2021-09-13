@@ -3,7 +3,7 @@
     <Card>
       Upload contract
       <div class="grid grid-cols-2">
-        <TurretFields />
+        <TurretFields @fields-updated="handleFieldsUpdated" />
         <TurretContract :turret="turret" @loaded="handleContractCodeLoaded" />
       </div>
     </Card>
@@ -40,6 +40,7 @@ import TurretFields from "@/components/turret/contracts/TurretFields.vue";
 import TurretContract from "@/components/turret/contracts/TurretContract.vue";
 import Contract from "@/entities/Contracts/Contract";
 import { getUploadTxXdr, uploadContract } from "@/services/turret";
+import Field from "@/entities/Contracts/Field";
 
 @Options({
   components: {
@@ -49,14 +50,17 @@ import { getUploadTxXdr, uploadContract } from "@/services/turret";
     Card,
   },
   watch: {
-    "contract.txFunction": function () {
-      if (this.turret.turret !== "") {
-        this.uploadFee = this.turret
-          .calculateUploadFee(this.contract)
-          .toFixed(7);
-      } else {
-        return "0";
-      }
+    contract: {
+      deep: true,
+      handler() {
+        if (this.turret.turret !== "") {
+          this.uploadFee = this.turret
+            .calculateUploadFee(this.contract)
+            .toFixed(7);
+        } else {
+          return "0";
+        }
+      },
     },
   },
 })
@@ -72,6 +76,11 @@ export default class UploadContract extends Vue {
 
   handleContractCodeLoaded(contractCode: string): void {
     this.contract.txFunction = contractCode;
+  }
+
+  handleFieldsUpdated(fields: Field[]): void {
+    console.log(fields);
+    this.contract.txFunctionFields = fields;
   }
 
   async handleUploadTx(): Promise<void> {
