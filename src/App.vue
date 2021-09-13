@@ -29,7 +29,7 @@
     <div id="turret-ops">
       <router-link to="/">Upload contract</router-link>
     </div>
-    <router-view />
+    <router-view v-if="turret.turret" />
   </div>
 </template>
 
@@ -50,6 +50,7 @@ export default class Home extends Vue {
 
   setTurret(turret: Turret): void {
     this.$store.commit("setTurret", turret);
+    this.turret = turret;
   }
 }
 </script>

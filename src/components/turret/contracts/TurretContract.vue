@@ -1,7 +1,6 @@
 <template>
   <div>
     <Card>
-      <h2>Upload contract</h2>
       <form enctype="multipart/form-data">
         <label for="contract">
           <span class="block text-gray-700 text-sm font-bold mb-2">
@@ -48,13 +47,18 @@ export default class TurretContract extends Vue {
   private contractCode = "";
 
   loadContract(): void {
-    const file = (document.querySelector("#contract") as HTMLInputElement)
-      .files![0];
+    const files = (document.querySelector("#contract") as HTMLInputElement)
+      .files;
+
+    const file = files ? files[0] : null;
     if (file) {
       const reader = new FileReader();
       reader.readAsText(file, "UTF-8");
       reader.onload = (evt) => {
-        this.contractCode = evt.target!.result!.toString();
+        if (!evt.target?.result) {
+          return;
+        }
+        this.contractCode = evt.target.result.toString();
         this.$emit("loaded", this.contractCode);
       };
       reader.onerror = function (evt) {
