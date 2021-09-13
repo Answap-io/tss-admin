@@ -14,20 +14,20 @@
             Byte length:<strong>{{ this.contract.txFunction.length }}</strong>
           </p>
           <p>
-            fields upload fee:
+            Fields fee:
             <strong>{{ fieldsFee }}</strong>
           </p>
           <p>
-            contract length fee:
+            Contract length fee:
             <strong>{{ contractLengthFee }}</strong>
           </p>
           <p>
-            total upload fee:
+            Total upload fee:
             <strong>{{ uploadFee }}</strong>
           </p>
-          <p>txFunctionFee transaction xdr</p>
-          <textarea v-model="txFunctionFee"></textarea>
+          <p>txFunctionFee transaction XDR:</p>
           <button @click.prevent="handleUploadTx">Get</button>
+          <textarea v-model="txFunctionFee"></textarea>
         </div>
 
         <button @click="upload">Upload</button>
