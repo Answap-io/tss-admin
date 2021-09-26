@@ -1,8 +1,7 @@
 <template>
   <div class="upload-contract grid">
     <Card>
-      Upload contract
-      <div class="grid grid-cols-2">
+      <div>
         <TurretFields @fields-updated="handleFieldsUpdated" />
         <TurretContract :turret="turret" @loaded="handleContractCodeLoaded" />
       </div>
@@ -26,11 +25,11 @@
             <strong>{{ uploadFee }}</strong>
           </p>
           <p>txFunctionFee transaction XDR:</p>
-          <button @click.prevent="handleUploadTx">Get</button>
+          <AppButton @click.prevent="handleUploadTx">Get txXDR</AppButton>
           <textarea v-model="txFunctionFee"></textarea>
         </div>
 
-        <button @click="upload">Upload</button>
+        <AppButton v-if="txFunctionFee" @click="upload">Upload</AppButton>
         <pre class="overflow-hidden overflow-clip">
           {{ contract.txFunction }}
         </pre>
@@ -49,9 +48,11 @@ import TurretContract from "@/components/turret/contracts/TurretContract.vue";
 import Contract from "@/entities/Contracts/Contract";
 import { getUploadTxXdr, uploadContract } from "@/services/turret";
 import Field from "@/entities/Contracts/Field";
+import AppButton from "@/components/common/AppButton.vue";
 
 @Options({
   components: {
+    AppButton,
     TurretContract,
     TurretFields,
     TurretForm,
@@ -62,9 +63,7 @@ import Field from "@/entities/Contracts/Field";
       deep: true,
       handler() {
         if (this.turret.turret !== "") {
-          this.uploadFee = this.turret
-            .calculateUploadFee(this.contract)
-            .toFixed(7);
+          this.uploadFee = this.turret.calculateUploadFee(this.contract);
 
           this.fieldsFee = this.turret
             .calculateFieldsFee(this.contract)

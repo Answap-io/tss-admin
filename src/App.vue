@@ -24,6 +24,10 @@
           "
           type="text"
         />
+        <span class="block text-gray-700 text-sm font-bold mb-2">
+          Public key
+          {{ $store.getters.keypair.publicKey() }}
+        </span>
       </label>
     </Card>
     <div id="turret-ops">

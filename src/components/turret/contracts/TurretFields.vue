@@ -1,54 +1,46 @@
 <template>
-  <div id="contract-fields">
-    <div v-for="field in fields" :key="field.name" class="contract-field">
-      <p>
-        <strong>Name</strong> <span>{{ field.name }}</span>
-      </p>
-      <p>
-        <strong>Type</strong> <span>{{ field.type }}</span>
-      </p>
-      <p>
-        <strong>Description</strong> <span>{{ field.description }}</span>
-      </p>
-      <p>
-        <strong>Rule type</strong> <span>{{ field.rule }}</span>
-      </p>
-
-      <button @click.prevent="deleteField(field)">Delete</button>
-      <button @click.prevent="editField(field)">Edit</button>
-    </div>
-
+  <div>
     <div id="new-field">
-      <label>
-        <span>Name</span>
-        <input v-model="editableField.name" type="text" />
-      </label>
-      <label>
-        <span>Type</span>
-        <input v-model="editableField.type" type="text" />
-      </label>
-      <label>
-        <span>Description</span>
-        <input v-model="editableField.description" type="text" />
-      </label>
-      <label>
-        <span>Optional</span>
-        <input
-          v-model="editableField.rule"
-          :value="rules.Optional"
-          type="radio"
+      <form class="w-full max-w-sm">
+        <ContractInput v-model="editableField.name" label="Name" />
+        <ContractInput v-model="editableField.type" label="Type" />
+        <ContractInput
+          v-model="editableField.description"
+          label="Description"
         />
-      </label>
-      <label>
-        <span>Required</span>
-        <input
-          v-model="editableField.rule"
-          :value="rules.Required"
-          type="radio"
-        />
-      </label>
+        <div class="md:flex md:items-center mb-6">
+          <div class="md:w-1/3"></div>
+          <label class="md:w-2/3 block text-gray-500 font-bold">
+            <input
+              v-model="editableField.rule"
+              :value="rules.Optional"
+              class="mr-2 leading-tight"
+              name="rule-type"
+              type="radio"
+            />
+            <span class="text-sm">Optional</span>
+          </label>
+          <label class="md:w-2/3 block text-gray-500 font-bold">
+            <input
+              v-model="editableField.rule"
+              :value="rules.Required"
+              class="mr-2 leading-tight"
+              name="rule-type"
+              type="radio"
+            />
+            <span class="text-sm">Required</span>
+          </label>
+        </div>
+        <AppButton @click="saveField">{{ editing ? "Save" : "Add" }}</AppButton>
+      </form>
     </div>
-    <button @click="saveField">{{ editing ? "Save" : "Add" }}</button>
+    <div id="contract-fields">
+      <TurretFieldsTable
+        :fields="fields"
+        @onEditField="(field) => editField(field)"
+        @onDeleteField="(field) => deleteField(field)"
+      />
+    </div>
   </div>
 </template>
 
@@ -57,9 +49,12 @@ import { Options, Vue } from "vue-class-component";
 import Turret from "@/entities/Turret";
 import Card from "@/components/common/Card.vue";
 import Field, { RuleTypes } from "@/entities/Contracts/Field";
+import ContractInput from "@/components/common/form/ContractInput.vue";
+import AppButton from "@/components/common/AppButton.vue";
+import TurretFieldsTable from "@/components/turret/contracts/TurretFieldsTable.vue";
 
 @Options({
-  components: { Card },
+  components: { TurretFieldsTable, AppButton, ContractInput, Card },
   emits: ["fieldsUpdated"],
   props: {
     turret: {
