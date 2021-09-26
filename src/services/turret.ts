@@ -1,6 +1,7 @@
 import {
   Account,
   Asset,
+  BASE_FEE,
   Claimant,
   Keypair,
   Networks,
@@ -12,6 +13,7 @@ import {
 import Turret from "@/entities/Turret";
 import mapTurret from "@/mappers/turretMapper";
 import Contract from "@/entities/Contracts/Contract";
+import BigNumber from "bignumber.js";
 
 export async function getTurret(url: string): Promise<Turret> {
   const responses = await Promise.all([
@@ -100,19 +102,24 @@ export async function getUploadTxXdr(
 
   const keyPair = Keypair.fromSecret(secretKey);
   const publicKey = keyPair.publicKey();
+  server.loadAccount(publicKey).then(console.log);
+  console.log(turret.calculateUploadFee(contract));
+
   const txBuilder = new TransactionBuilder(
     await server.loadAccount(publicKey),
     {
-      fee: (await server.fetchBaseFee()).toString(),
+      fee: BASE_FEE,
       networkPassphrase: Networks.TESTNET,
     }
   ).addOperation(
     Operation.payment({
-      amount: turret.calculateUploadFee(contract).toFixed(7),
+      amount: turret.calculateUploadFee(contract),
       asset: Asset.native(),
       destination: turret.turret,
     })
   );
+
+  console.log(txBuilder);
 
   const tx = txBuilder.setTimeout(60 * 60).build();
   tx.sign(keyPair);

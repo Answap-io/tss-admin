@@ -1,6 +1,7 @@
 import Fee from "@/entities/Fee";
 import Divisor from "@/entities/Divisor";
 import Contract from "@/entities/Contracts/Contract";
+import BigNumber from "bignumber.js";
 
 export default class Turret {
   public toml = "";
@@ -29,25 +30,21 @@ export default class Turret {
     );
   }
 
-  public calculateUploadFee(contract: Contract): number {
-    return (
-      this.calculateContractLengthFee(contract) +
-      this.calculateFieldsFee(contract)
-    );
+  public calculateUploadFee(contract: Contract): string {
+    return new BigNumber(0)
+      .plus(this.calculateContractLengthFee(contract))
+      .plus(this.calculateFieldsFee(contract))
+      .toFixed(7);
   }
 
   public calculateContractLengthFee(contract: Contract): number {
-    const functionBuffer = Buffer.from(contract.txFunction);
-    return functionBuffer.length / Number(this.divisor.upload);
+    return contract.txFunction.length / Number(this.divisor.upload);
   }
 
   public calculateFieldsFee(contract: Contract): number {
-    const fieldsBuffer = Buffer.from(
-      JSON.stringify(contract.txFunctionFields),
-      "base64"
-    );
-
-    return fieldsBuffer.length / Number(this.divisor.upload);
+    const base64 = btoa(JSON.stringify(contract.txFunctionFields));
+    const buffer = Buffer.from(base64, "base64");
+    return buffer.length / Number(this.divisor.upload);
   }
 
   public calculateRunFee(): number {

@@ -23,22 +23,7 @@
           type="text"
         />
       </label>
-      <button
-        class="
-          bg-blue-500
-          hover:bg-blue-700
-          text-white
-          font-bold
-          my-2
-          py-2
-          px-4
-          rounded
-          focus:outline-none focus:shadow-outline
-        "
-        type="submit"
-      >
-        Fetch
-      </button>
+      <AppButton @click="loadTurret">Fetch</AppButton>
     </form>
     <p v-if="turret.turret !== ''">
       <strong>Loaded turret {{ turret.turret }}</strong>
@@ -110,9 +95,10 @@ import Turret from "@/entities/Turret";
 import Card from "@/components/common/Card.vue";
 import TurretContract from "@/components/turret/contracts/TurretContract.vue";
 import { getTurret } from "@/services/turret";
+import AppButton from "@/components/common/AppButton.vue";
 
 @Options({
-  components: { TurretContract, Card },
+  components: { AppButton, TurretContract, Card },
   emits: ["loaded"],
 })
 export default class TurretForm extends Vue {
