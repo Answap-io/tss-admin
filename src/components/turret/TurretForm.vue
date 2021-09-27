@@ -69,9 +69,6 @@
         <p>
           Max: <strong>{{ turret.fee.max }}</strong>
         </p>
-        <p>
-          Days: <strong>{{ turret.fee.days }}</strong>
-        </p>
       </div>
 
       <div class="divisor">
@@ -104,7 +101,8 @@ import AppButton from "@/components/common/AppButton.vue";
   emits: ["loaded"],
 })
 export default class TurretForm extends Vue {
-  private turretUrl = "http://localhost:8787";
+  private turretUrl =
+    "https://stellar-turrets-testnet.sdf-ecosystem.workers.dev";
   private turret = Turret.createNull();
   private showDetails = false;
   private isLoading = false;

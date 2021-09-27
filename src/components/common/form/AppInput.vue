@@ -3,7 +3,7 @@
     <div class="md:w-1/3">
       <label
         :for="inputId"
-        class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+        class="block text-gray-500 font-bold mb-1 md:mb-0 pr-4"
       >
         {{ label }}
       </label>
@@ -45,7 +45,7 @@ import { Options, Vue } from "vue-class-component";
     modelValue: String,
   },
 })
-export default class ContractInput extends Vue {
+export default class AppInput extends Vue {
   private label = "";
 
   get inputId(): string {

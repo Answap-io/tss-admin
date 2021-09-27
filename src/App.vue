@@ -30,10 +30,19 @@
         </span>
       </label>
     </Card>
-    <div id="turret-ops">
-      <router-link to="/">Upload contract</router-link>
+    <div id="turret-ops" class="mb-5">
+      <router-link to="/">
+        <AppButton class="mr-2">Upload contract</AppButton>
+      </router-link>
+      <router-link to="/xdr-token">
+        <AppButton class="mr-2">Manage XDR Token & Fund Turret</AppButton>
+      </router-link>
+      <router-link to="/">
+        <AppButton class="mr-2">View & Run functions</AppButton>
+      </router-link>
     </div>
     <router-view v-if="turret.turret" />
+    <p v-else>Waiting for turret information to be loaded</p>
   </div>
 </template>
 
@@ -42,9 +51,11 @@ import { Options, Vue } from "vue-class-component";
 import TurretForm from "@/components/turret/TurretForm.vue";
 import Turret from "@/entities/Turret"; // @ is an alias to /src
 import Card from "@/components/common/Card.vue";
+import AppButton from "@/components/common/AppButton.vue";
 
 @Options({
   components: {
+    AppButton,
     TurretForm,
     Card,
   },
