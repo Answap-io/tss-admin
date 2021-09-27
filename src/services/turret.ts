@@ -102,8 +102,6 @@ export async function getUploadTxXdr(
 
   const keyPair = Keypair.fromSecret(secretKey);
   const publicKey = keyPair.publicKey();
-  server.loadAccount(publicKey).then(console.log);
-  console.log(turret.calculateUploadFee(contract));
 
   const txBuilder = new TransactionBuilder(
     await server.loadAccount(publicKey),
@@ -118,8 +116,6 @@ export async function getUploadTxXdr(
       destination: turret.turret,
     })
   );
-
-  console.log(txBuilder);
 
   const tx = txBuilder.setTimeout(60 * 60).build();
   tx.sign(keyPair);
@@ -149,21 +145,4 @@ export async function uploadContract(
   });
 
   return response.json();
-}
-
-function doSomething(): void {
-  const server = new Server("https://horizon-testnet.stellar.org");
-  const txBuilder = new TransactionBuilder(new Account("asd", "0"));
-  txBuilder.addOperation(
-    Operation.payment({
-      amount: "1",
-      asset: Asset.native(),
-      destination: "turret",
-      source: "user",
-    })
-  );
-
-  const kp = Keypair.fromSecret("turret1secret");
-  const tx = txBuilder.build();
-  tx.sign(kp);
 }
