@@ -1,5 +1,16 @@
 <template>
-  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  <div
+    class="
+      bg-white
+      border-2 border-gray-300
+      shadow-xl
+      rounded
+      px-8
+      pt-6
+      pb-8
+      mb-8
+    "
+  >
     <slot></slot>
   </div>
 </template>

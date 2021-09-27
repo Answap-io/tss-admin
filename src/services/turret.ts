@@ -33,7 +33,7 @@ async function createClaimableBalanceTx(
   turret: Turret,
   keyPair: Keypair
 ): Promise<Transaction> {
-  const server = new Server("https://horizon-testnet.stellar.org");
+  const server = new Server(turret.horizon);
   const asset = Asset.native();
 
   const amount = turret.fee.min;
@@ -59,7 +59,7 @@ export async function createRunAuthToken(
   turret: Turret,
   keyPair: Keypair
 ): Promise<string> {
-  const server = new Server("https://horizon-testnet.stellar.org");
+  const server = new Server(turret.horizon);
   const claimableBalanceTx = await createClaimableBalanceTx(turret, keyPair);
   claimableBalanceTx.sign(keyPair);
 
@@ -98,7 +98,7 @@ export async function getUploadTxXdr(
   secretKey: string,
   contract: Contract
 ): Promise<string> {
-  const server = new Server("https://horizon-testnet.stellar.org");
+  const server = new Server(turret.horizon);
 
   const keyPair = Keypair.fromSecret(secretKey);
   const publicKey = keyPair.publicKey();
@@ -129,9 +129,6 @@ export async function uploadContract(
 ): Promise<any> {
   const formData = new FormData();
 
-  contract.txFunctionFields.reduce((prev, curr) => {
-    return curr;
-  });
   formData.append("txFunction", contract.txFunction);
   formData.append(
     "txFunctionFields",

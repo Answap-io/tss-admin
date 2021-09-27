@@ -1,13 +1,11 @@
 <template>
-  <div>
+  <div class="my-5">
+    <h2 class="text-xl mb-5">Add contract field (Optional)</h2>
     <div id="new-field">
       <form class="w-full max-w-sm">
-        <ContractInput v-model="editableField.name" label="Name" />
-        <ContractInput v-model="editableField.type" label="Type" />
-        <ContractInput
-          v-model="editableField.description"
-          label="Description"
-        />
+        <AppInput v-model="editableField.name" label="Name" />
+        <AppInput v-model="editableField.type" label="Type" />
+        <AppInput v-model="editableField.description" label="Description" />
         <div class="md:flex md:items-center mb-6">
           <div class="md:w-1/3"></div>
           <label class="md:w-2/3 block text-gray-500 font-bold">
@@ -31,10 +29,14 @@
             <span class="text-sm">Required</span>
           </label>
         </div>
-        <AppButton @click="saveField">{{ editing ? "Save" : "Add" }}</AppButton>
+        <div class="text-center">
+          <AppButton @click="saveField" class="block w-full">{{
+            editing ? "Save" : "Add"
+          }}</AppButton>
+        </div>
       </form>
     </div>
-    <div id="contract-fields">
+    <div id="contract-fields" class="my-10">
       <TurretFieldsTable
         :fields="fields"
         @onEditField="(field) => editField(field)"
@@ -49,12 +51,12 @@ import { Options, Vue } from "vue-class-component";
 import Turret from "@/entities/Turret";
 import Card from "@/components/common/Card.vue";
 import Field, { RuleTypes } from "@/entities/Contracts/Field";
-import ContractInput from "@/components/common/form/ContractInput.vue";
+import AppInput from "@/components/common/form/AppInput.vue";
 import AppButton from "@/components/common/AppButton.vue";
 import TurretFieldsTable from "@/components/turret/contracts/TurretFieldsTable.vue";
 
 @Options({
-  components: { TurretFieldsTable, AppButton, ContractInput, Card },
+  components: { TurretFieldsTable, AppButton, AppInput, Card },
   emits: ["fieldsUpdated"],
   props: {
     turret: {

@@ -1,5 +1,6 @@
 <template>
   <div class="upload-contract grid">
+    <h1 class="text-2xl mb-5">Upload contract</h1>
     <Card>
       <div>
         <TurretFields @fields-updated="handleFieldsUpdated" />
