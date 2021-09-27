@@ -7190,6 +7190,11 @@ json-stringify-safe@~5.0.1:
   resolved "https://registry.npm.taobao.org/json-stringify-safe/download/json-stringify-safe-5.0.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fjson-stringify-safe%2Fdownload%2Fjson-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
 
+json-tree-view@^0.4.12:
+  version "0.4.12"
+  resolved "https://registry.yarnpkg.com/json-tree-view/-/json-tree-view-0.4.12.tgz#634307024bd9b5069bcfd15379030942f95c6a57"
+  integrity sha512-p6si1qYiJQuJdL/KUCuAXmxWllIpZqyCCbcmIBD9k2M01JZVgzyYq9hVcTxeiy1rPgTiyZRVA86U92Ymw63dUQ==
+
 json3@^3.3.3:
   version "3.3.3"
   resolved "https://registry.npm.taobao.org/json3/download/json3-3.3.3.tgz#7fc10e375fc5ae42c4705a5cc0aa6f62be305b81"
