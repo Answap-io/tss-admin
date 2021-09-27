@@ -23,7 +23,9 @@
           type="text"
         />
       </label>
-      <AppButton @click="loadTurret">Fetch</AppButton>
+      <AppButton @click="loadTurret">
+        {{ isLoading ? "Loading..." : "Fetch" }}
+      </AppButton>
     </form>
     <p v-if="turret.turret !== ''">
       <strong>Loaded turret {{ turret.turret }}</strong>
@@ -105,10 +107,13 @@ export default class TurretForm extends Vue {
   private turretUrl = "http://localhost:8787";
   private turret = Turret.createNull();
   private showDetails = false;
+  private isLoading = false;
 
   async loadTurret(): Promise<void> {
+    this.isLoading = true;
     this.turret = await getTurret(this.turretUrl);
     this.$emit("loaded", this.turret);
+    this.isLoading = false;
   }
 }
 </script>

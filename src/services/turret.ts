@@ -127,7 +127,10 @@ export async function getUploadTxXdr(
   return tx.toEnvelope().toXDR("base64");
 }
 
-export async function uploadContract(turret: Turret, contract: Contract) {
+export async function uploadContract(
+  turret: Turret,
+  contract: Contract
+): Promise<any> {
   const formData = new FormData();
 
   contract.txFunctionFields.reduce((prev, curr) => {
@@ -145,7 +148,7 @@ export async function uploadContract(turret: Turret, contract: Contract) {
     body: formData,
   });
 
-  console.log(await response.json());
+  return response.json();
 }
 
 function doSomething(): void {
