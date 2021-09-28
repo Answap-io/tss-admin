@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import Turret from "@/entities/Turret";
 import IState from "@/store/IState";
-import { Account, Keypair } from "stellar-sdk";
+import { Keypair } from "stellar-sdk";
 
 export default createStore<IState>({
   state: {
@@ -16,6 +16,16 @@ export default createStore<IState>({
   actions: {},
   modules: {},
   getters: {
-    keypair: (state) => Keypair.fromSecret(state.privateKey),
+    keypair: (state) => {
+      try {
+        return Keypair.fromSecret(state.privateKey);
+      } catch {
+        return {
+          publicKey(): string {
+            return "";
+          },
+        };
+      }
+    },
   },
 });
