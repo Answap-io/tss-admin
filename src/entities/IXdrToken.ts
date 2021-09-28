@@ -1,5 +1,4 @@
-export default interface ITransactionFee {
-  balance: number;
+export default interface IXdrToken {
   hash: string;
   lastModifiedTime: number;
   publicKey: string;

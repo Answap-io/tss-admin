@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import UploadContract from "@/views/UploadContract.vue";
-import FeePayments from "@/views/FeePayments.vue";
-import ManageXdrToken from "@/views/ManageXdrToken.vue";
+import CreateXdrToken from "@/views/CreateXdrToken.vue";
+import ManageTurretFunds from "@/views/ManageTurretFunds.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,7 +12,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/xdr-token",
     name: "Manage xdr token",
-    component: ManageXdrToken,
+    component: CreateXdrToken,
+  },
+  {
+    path: "/turret-funds",
+    name: "Manage turret funds",
+    component: ManageTurretFunds,
   },
 ];
 
