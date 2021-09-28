@@ -67,7 +67,7 @@
               }}
             </AppButton>
 
-            <JsonTreeView :json="paymentResult" />
+            <JsonTreeView :json="paymentResult" v-if="paymentResult" />
           </div>
         </form>
       </div>

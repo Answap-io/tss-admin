@@ -34,7 +34,7 @@ export default class JsonTreeView extends Vue {
   renderJson(): void {
     const ref = this.$refs.placeholder as HTMLElement;
     const treeView = new JSONTreeView(
-      "txFunctionFee",
+      "result",
       JSON.parse(JSON.stringify(this.json))
     );
     treeView.readonly = true;
