@@ -109,7 +109,7 @@ export default class UploadContract extends Vue {
   private txFunctionFeeXdr = "";
   private isLoading = false;
   private isUploading = false;
-  private uploadResponse = "";
+  private uploadResponse = null as unknown;
 
   created(): void {
     this.turret = this.$store.state.turret;

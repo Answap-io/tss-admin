@@ -71,26 +71,55 @@
       <p class="mb-4">{{ ttlError }}</p>
     </div>
 
-    <AppButton @click="fetchTxFees">Create XdrToken</AppButton>
+    <div class="flex mb-6">
+      <div class="w-1/3 block text-gray-500 font-bold mb-1 md:mb-0 pr-4">
+        Single use?
+      </div>
+      <label class="mr-4">
+        <input
+          v-model="isSingleUse"
+          class="mr-2 leading-tight"
+          name="rule-type"
+          type="radio"
+          value="true"
+        />
+        <span class="text-sm">True</span>
+      </label>
+      <label>
+        <input
+          v-model="isSingleUse"
+          class="mr-2 leading-tight"
+          name="rule-type"
+          type="radio"
+          value="false"
+        />
+        <span class="text-sm">False</span>
+      </label>
+    </div>
+    <AppButton @click="createXdrToken"
+      >{{ isLoading || isCreatingXdr ? "Loading..." : "Create xdrToken" }}
+    </AppButton>
+
+    <JsonTreeView v-if="requestError" :json="requestError" />
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import {
-  Account,
-  Keypair,
-  Networks,
-  Operation,
-  Server,
-  TransactionBuilder,
-} from "stellar-sdk";
 import AppButton from "@/components/common/AppButton.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
+import JsonTreeView from "@/components/common/JsonTreeView.vue";
+import XdrToken from "@/entities/XdrToken";
 
 @Options({
-  components: { AppInput, AppButton },
+  components: { JsonTreeView, AppInput, AppButton },
   emits: ["createXdrToken"],
+  props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+  },
 })
 export default class XdrTokenForm extends Vue {
   private newFunctionHash = "";
@@ -99,6 +128,9 @@ export default class XdrTokenForm extends Vue {
   private xdrToken = "";
   private ttl = "86400";
   private ttlError = "";
+  private isSingleUse = "false";
+  private requestError = null as unknown;
+  private isCreatingXdr = false;
 
   saveFunctionHash(): void {
     const ttl = Number(this.ttl);
@@ -123,42 +155,27 @@ export default class XdrTokenForm extends Vue {
     );
   }
 
-  async fetchTxFees(): Promise<void> {
-    const turret = this.$store.state.turret;
+  async createXdrToken(): Promise<void> {
+    this.isCreatingXdr = true;
     this.xdrToken = "";
-
-    const privateKeypair = Keypair.fromSecret(this.$store.state.privateKey);
-    const pk = privateKeypair.publicKey();
-
-    const testnet = new Server(turret.horizon);
+    this.requestError = null;
 
     try {
-      const tempAcct = new Account(pk, "-1");
-      const fee = await testnet.fetchBaseFee();
-      const txBuilder = new TransactionBuilder(tempAcct, {
-        fee: fee.toString(),
-        networkPassphrase: Networks.TESTNET,
-      });
+      const token = await XdrToken.create(
+        this.$store.state.turret,
+        this.$store.getters.keypair,
+        this.isSingleUse,
+        Number(this.ttl),
+        this.functionHashes
+      );
 
-      for (const hash of this.functionHashes) {
-        txBuilder.addOperation(
-          Operation.manageData({
-            name: "txFunctionHash",
-            value: hash,
-          })
-        );
-      }
-
-      const tx = txBuilder.setTimeout(Number(this.ttl)).build();
-
-      tx.sign(privateKeypair);
-
-      const token = tx.toEnvelope().toXDR("base64");
       this.xdrToken = token;
 
       this.$emit("createXdrToken", token);
     } catch (e) {
-      console.error(e);
+      this.requestError = e;
+    } finally {
+      this.isCreatingXdr = false;
     }
   }
 }

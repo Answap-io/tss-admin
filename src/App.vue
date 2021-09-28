@@ -5,7 +5,8 @@
     <Card>
       <label for="private-key">
         <span class="block text-gray-700 text-sm font-bold mb-2">
-          Private key
+          Private key (this will be used to create your XDR token and fund
+          turrets)
         </span>
         <input
           id="private-key"
@@ -35,7 +36,10 @@
         <AppButton class="mr-2">Upload contract</AppButton>
       </router-link>
       <router-link to="/xdr-token">
-        <AppButton class="mr-2">Manage XDR Token & Fund Turret</AppButton>
+        <AppButton class="mr-2">Create XDR Token</AppButton>
+      </router-link>
+      <router-link to="/turret-funds">
+        <AppButton class="mr-2">Manage Turret funds</AppButton>
       </router-link>
       <router-link to="/">
         <AppButton class="mr-2">View & Run functions</AppButton>

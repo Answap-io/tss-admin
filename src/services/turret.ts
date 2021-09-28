@@ -13,7 +13,6 @@ import {
 import Turret from "@/entities/Turret";
 import mapTurret from "@/mappers/turretMapper";
 import Contract from "@/entities/Contracts/Contract";
-import BigNumber from "bignumber.js";
 
 export async function getTurret(url: string): Promise<Turret> {
   const responses = await Promise.all([
@@ -126,7 +125,7 @@ export async function getUploadTxXdr(
 export async function uploadContract(
   turret: Turret,
   contract: Contract
-): Promise<any> {
+): Promise<unknown> {
   const formData = new FormData();
 
   formData.append("txFunction", contract.txFunction);
