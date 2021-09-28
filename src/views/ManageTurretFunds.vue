@@ -90,7 +90,7 @@ import FeeBalanceInfo from "@/components/turret/fee-balance/FeeBalanceInfo.vue";
 import XdrTokenForm from "@/components/turret/xdr-token/XdrTokenForm.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
 import JsonTreeView from "@/components/common/JsonTreeView.vue";
-import PaymentInfo from "@/components/turret/payment/PaymentInfo.vue"
+import PaymentInfo from "@/components/turret/payment/PaymentInfo.vue";
 import scrollToBottom from "@/helpers/domHelper";
 import IFeeBalance from "@/entities/IFeeBalance";
 import FeeBalance from "@/entities/FeeBalance";
