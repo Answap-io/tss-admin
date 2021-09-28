@@ -109,7 +109,7 @@ import { Options, Vue } from "vue-class-component";
 import AppButton from "@/components/common/AppButton.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
 import JsonTreeView from "@/components/common/JsonTreeView.vue";
-import XdrToken from "@/entities/XdrToken";
+import { generateXdr } from "@/services/turret/turret";
 
 @Options({
   components: { JsonTreeView, AppInput, AppButton },
@@ -161,7 +161,7 @@ export default class XdrTokenForm extends Vue {
     this.requestError = null;
 
     try {
-      const token = await XdrToken.create(
+      const token = await generateXdr(
         this.$store.state.turret,
         this.$store.getters.keypair,
         this.isSingleUse,

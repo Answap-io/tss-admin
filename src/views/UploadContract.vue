@@ -64,7 +64,7 @@ import Card from "@/components/common/Card.vue";
 import TurretFields from "@/components/turret/contracts/TurretFields.vue";
 import TurretContract from "@/components/turret/contracts/TurretContract.vue";
 import Contract from "@/entities/Contracts/Contract";
-import { getUploadTxXdr, uploadContract } from "@/services/turret";
+import { getUploadTxXdr, uploadContract } from "@/services/turret/contract";
 import Field from "@/entities/Contracts/Field";
 import AppButton from "@/components/common/AppButton.vue";
 import { Transaction } from "stellar-sdk";

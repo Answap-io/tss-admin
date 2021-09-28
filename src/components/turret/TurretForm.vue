@@ -93,7 +93,7 @@ import { Options, Vue } from "vue-class-component";
 import Turret from "@/entities/Turret";
 import Card from "@/components/common/Card.vue";
 import TurretContract from "@/components/turret/contracts/TurretContract.vue";
-import { getTurret } from "@/services/turret";
+import { getTurret } from "@/services/turret/turret";
 import AppButton from "@/components/common/AppButton.vue";
 
 @Options({

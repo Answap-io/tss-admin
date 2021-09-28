@@ -2,33 +2,82 @@
   <div class="fee-payments">
     <h1 class="text-2xl mb-5">Manage Turret funds</h1>
 
-    <h2 class="text-2xl mb-5">View Fee Balance</h2>
-    <AppInput v-model="xdrToken" label="XDR Token" />
-    <p class="mb-5 text-sm">
-      <router-link class="underline text-blue-500" to="/xdr-token">
-        Create an XDR token
-      </router-link>
-      or
-      <a class="underline text-blue-500" href="#" @click.prevent="createXdr">
-        {{
-          isCreatingXdr
-            ? "creating..."
-            : `get a global XDR token for ${$store.getters.keypair.publicKey()} (expires in an hour)`
-        }}
-      </a>
-    </p>
-    <AppButton @click="() => fetchTransactionFee(false)"
-      >{{ isFetching ? "Loading..." : "Fetch" }}
-    </AppButton>
+    <div class="grid grid-cols-2 gap-10">
+      <div>
+        <h2 class="text-2xl mb-5">View Fee Balance</h2>
+        <AppInput v-model="xdrToken" label="XDR Token" />
+        <p class="mb-5 text-sm">
+          <router-link class="underline text-blue-500" to="/xdr-token">
+            Create an XDR token
+          </router-link>
+          or
+          <a
+            class="underline text-blue-500"
+            href="#"
+            @click.prevent="createXdr"
+          >
+            {{
+              isCreatingXdr
+                ? "creating..."
+                : `get a global XDR token for ${$store.getters.keypair.publicKey()} (expires in an hour)`
+            }}
+          </a>
+        </p>
+        <AppButton @click="() => fetchTransactionFee()"
+          >{{ isFetching ? "Loading..." : "Fetch" }}
+        </AppButton>
 
-    <JsonTreeView :json="fetchError" v-if="fetchError" />
+        <JsonTreeView v-if="fetchError" :json="fetchError" />
+      </div>
+      <div>
+        <form @submit.prevent="() => {}">
+          <AppInput v-model="publicKeyToFund" label="Public key to fund" />
+          <a
+            class="blue-500 underline"
+            href="#"
+            @click.prevent="
+              publicKeyToFund = $store.getters.keypair.publicKey()
+            "
+          >
+            Use {{ $store.getters.keypair.publicKey() }}
+          </a>
 
+          <div class="mt-5">
+            <AppButton
+              class="mr-4"
+              @click.prevent="
+                () => handleFundingPublicKey($store.state.turret.fee.min)
+              "
+            >
+              {{
+                isProcessingPayment
+                  ? "Loading..."
+                  : `Fund Min (${$store.state.turret.fee.min} XLM)`
+              }}
+            </AppButton>
+            <AppButton
+              @click.prevent="
+                () => handleFundingPublicKey($store.state.turret.fee.max)
+              "
+            >
+              {{
+                isProcessingPayment
+                  ? "Loading..."
+                  : `Fund max (${$store.state.turret.fee.max} XLM)`
+              }}
+            </AppButton>
+
+            <JsonTreeView :json="paymentResult" />
+          </div>
+        </form>
+      </div>
+    </div>
     <FeeBalanceInfo
       v-if="feeBalance.hash"
       :is-loading="isProcessingPayment"
       :show-actions="true"
       :transaction-fee="feeBalance"
-      @fund="(amount) => handlePayment(true, this.xdrToken, amount)"
+      @fund="(amount) => handleFundingFromFeeBalanceInfo(this.xdrToken, amount)"
     />
   </div>
 </template>
@@ -40,19 +89,15 @@ import AppButton from "@/components/common/AppButton.vue";
 import FeeBalanceInfo from "@/components/turret/fee-balance/FeeBalanceInfo.vue";
 import XdrTokenForm from "@/components/turret/xdr-token/XdrTokenForm.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
-import {
-  Asset,
-  Keypair,
-  Networks,
-  Operation,
-  Server,
-  TransactionBuilder,
-} from "stellar-sdk";
 import JsonTreeView from "@/components/common/JsonTreeView.vue";
 import scrollToBottom from "@/helpers/domHelper";
 import IFeeBalance from "@/entities/IFeeBalance";
 import FeeBalance from "@/entities/FeeBalance";
-import XdrToken from "@/entities/XdrToken";
+import {
+  fundTurret,
+  generateXdr,
+  getFeeBalance,
+} from "@/services/turret/turret";
 
 @Options({
   components: {
@@ -66,18 +111,20 @@ import XdrToken from "@/entities/XdrToken";
 export default class ManageTurretFunds extends Vue {
   private feeBalance: IFeeBalance = FeeBalance.createNull();
   private xdrToken = "";
-  private paymentResult = null;
+  private paymentResult = null as unknown;
   private fetchError = null;
   private isFetching = false;
   private isCreatingXdr = false;
   private isProcessingPayment = false;
+  private publicKeyToFund = "";
 
   async createXdr(): Promise<void> {
     try {
       const turret = this.$store.state.turret;
       const keyPair = this.$store.getters.keypair;
       this.isCreatingXdr = true;
-      this.xdrToken = await XdrToken.create(turret, keyPair, "true", 3600, []);
+      this.xdrToken = await generateXdr(turret, keyPair, "true", 3600, []);
+      await this.fetchTransactionFee();
     } catch (e) {
       console.error(e);
     } finally {
@@ -85,69 +132,45 @@ export default class ManageTurretFunds extends Vue {
     }
   }
 
-  async fetchTransactionFee(isNew: boolean, xdrToken?: string): Promise<void> {
+  async fetchTransactionFee(xdrToken?: string): Promise<void> {
     this.isFetching = true;
     this.fetchError = null;
     this.feeBalance = FeeBalance.createNull();
 
     const turret = this.$store.state.turret;
-    const result = await fetch(`${turret.url}/tx-fees`, {
-      headers: {
-        Authorization: `Bearer ${xdrToken ?? this.xdrToken}`,
-      },
-    });
-
-    if (result.ok) {
-      this.feeBalance = (await result.json()) as IFeeBalance;
-    } else {
-      this.fetchError = await result.json();
+    try {
+      this.feeBalance = await getFeeBalance(turret, xdrToken ?? this.xdrToken);
+    } catch (e) {
+      console.error(e);
+      this.fetchError = e;
     }
 
     this.isFetching = false;
-
     await this.$nextTick(scrollToBottom);
   }
 
-  async handlePayment(
-    isNew: boolean,
+  async handleFundingFromFeeBalanceInfo(
     xdrToken: string,
     amount: string
   ): Promise<void> {
     this.isProcessingPayment = true;
+    const kp = this.$store.getters.keypair;
     const turret = this.$store.state.turret;
-    const privateKeypair = Keypair.fromSecret(this.$store.state.privateKey);
-    const pk = privateKeypair.publicKey();
+    this.paymentResult = await fundTurret(turret, kp.publicKey(), kp, amount);
+    await this.fetchTransactionFee(xdrToken);
+    this.isProcessingPayment = false;
+  }
 
-    const server = new Server(turret.horizon);
+  async handleFundingPublicKey(amount: string): Promise<void> {
+    this.isProcessingPayment = true;
 
-    const fee = await server.fetchBaseFee();
-    const txBuilder = new TransactionBuilder(await server.loadAccount(pk), {
-      fee: fee.toString(),
-      networkPassphrase: Networks.TESTNET,
-    });
-
-    txBuilder.addOperation(
-      Operation.payment({
-        source: pk,
-        asset: Asset.native(),
-        amount: amount,
-        destination: turret.turret,
-      })
+    this.paymentResult = await fundTurret(
+      this.$store.state.turret,
+      this.publicKeyToFund,
+      this.$store.getters.keypair,
+      amount
     );
 
-    const tx = txBuilder.setTimeout(60).build();
-    tx.sign(privateKeypair);
-
-    const result = await fetch(`${turret.url}/tx-fees/${pk}`, {
-      method: "POST",
-      body: JSON.stringify({
-        txFunctionFee: tx.toXDR(),
-      }),
-    });
-
-    this.paymentResult = await result.json();
-
-    await this.fetchTransactionFee(isNew, xdrToken);
     this.isProcessingPayment = false;
   }
 }

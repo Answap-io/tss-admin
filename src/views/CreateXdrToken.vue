@@ -40,6 +40,7 @@ import XdrTokenForm from "@/components/turret/xdr-token/XdrTokenForm.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
 import JsonTreeView from "@/components/common/JsonTreeView.vue";
 import scrollToBottom from "@/helpers/domHelper";
+import { getFeeBalance } from "@/services/turret/turret";
 
 @Options({
   components: {
@@ -62,18 +63,12 @@ export default class CreateXdrToken extends Vue {
     this.xdrTokenRaw = rawXdrToken;
     this.createXdrTokenError = null;
     const turret = this.$store.state.turret;
-    const result = await fetch(`${turret.url}/tx-fees`, {
-      headers: {
-        Authorization: `Bearer ${rawXdrToken}`,
-      },
-    });
 
-    const txFeeData = await result.json();
-
-    if (!result.ok) {
-      this.createXdrTokenError = txFeeData;
-    } else {
+    try {
+      const txFeeData = await getFeeBalance(turret, rawXdrToken);
       this.xdrToken = txFeeData as IXdrToken;
+    } catch (e) {
+      this.createXdrTokenError = e;
     }
 
     this.isLoading = false;
