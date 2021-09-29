@@ -41,7 +41,7 @@
       <router-link to="/turret-funds">
         <AppButton class="mr-2">Manage Turret funds</AppButton>
       </router-link>
-      <router-link to="/">
+      <router-link to="/tx-functions">
         <AppButton class="mr-2">View & Run functions</AppButton>
       </router-link>
     </div>

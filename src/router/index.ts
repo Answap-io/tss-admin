@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import UploadContract from "@/views/UploadContract.vue";
 import CreateXdrToken from "@/views/CreateXdrToken.vue";
 import ManageTurretFunds from "@/views/ManageTurretFunds.vue";
+import TxFunctions from "@/views/TxFunctions.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -18,6 +19,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/turret-funds",
     name: "Manage turret funds",
     component: ManageTurretFunds,
+  },
+  {
+    path: "/tx-functions",
+    name: "View and run functions",
+    component: TxFunctions,
   },
 ];
 
