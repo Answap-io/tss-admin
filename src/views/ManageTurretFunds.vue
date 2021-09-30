@@ -94,6 +94,8 @@ import PaymentInfo from "@/components/turret/payment/PaymentInfo.vue";
 import scrollToBottom from "@/helpers/domHelper";
 import IFeeBalance from "@/entities/IFeeBalance";
 import FeeBalance from "@/entities/FeeBalance";
+import Payment from "@/entities/Payment";
+import IPayment from "@/entities/IPayment";
 import {
   fundTurret,
   generateXdr,
@@ -113,7 +115,7 @@ import {
 export default class ManageTurretFunds extends Vue {
   private feeBalance: IFeeBalance = FeeBalance.createNull();
   private xdrToken = "";
-  private paymentResult = null as unknown;
+  private paymentResult: IPayment = Payment.createNull();
   private fetchError = null;
   private isFetching = false;
   private isCreatingXdr = false;
@@ -158,7 +160,12 @@ export default class ManageTurretFunds extends Vue {
     this.isProcessingPayment = true;
     const kp = this.$store.getters.keypair;
     const turret = this.$store.state.turret;
-    this.paymentResult = await fundTurret(turret, kp.publicKey(), kp, amount);
+    this.paymentResult = (await fundTurret(
+      turret,
+      kp.publicKey(),
+      kp,
+      amount
+    )) as IPayment;
     await this.fetchTransactionFee(xdrToken);
     this.isProcessingPayment = false;
   }
@@ -166,12 +173,12 @@ export default class ManageTurretFunds extends Vue {
   async handleFundingPublicKey(amount: string): Promise<void> {
     this.isProcessingPayment = true;
 
-    this.paymentResult = await fundTurret(
+    this.paymentResult = (await fundTurret(
       this.$store.state.turret,
       this.publicKeyToFund,
       this.$store.getters.keypair,
       amount
-    );
+    )) as IPayment;
 
     this.isProcessingPayment = false;
   }
