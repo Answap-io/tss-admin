@@ -134,7 +134,7 @@ import ITxFunction from "@/entities/ITxFunction";
     Card,
   },
 })
-export default class TxFunctions extends Vue {
+export default class TxFunctionInfo extends Vue {
   private txFunctionHash = "";
   private txFunction = TxFunction.createNull();
 
