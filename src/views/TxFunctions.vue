@@ -3,12 +3,12 @@
     <h1 class="text-2xl mb-5">View and run functions</h1>
     <Card>
       <AppInput v-model="txFunctionHash" label="Function hash" />
-      <AppButton @click="getFunction">Fetch</AppButton>
+      <AppButton @click="getTxFunction">Fetch</AppButton>
 
-      <div v-if="response">
+      <div v-if="txFunction.function">
         <p class="mt-4 font-bold">TxFunction code</p>
         <textarea
-          v-model="response.function"
+          v-model="txFunction.function"
           class="border-2 border-blue-100 mb-10 h-auto"
           cols="80"
           rows="4"
@@ -79,7 +79,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
-              v-for="field in response.fields"
+              v-for="field in txFunction.fields"
               :key="field.name"
               class="contract-field"
             >
@@ -112,7 +112,7 @@
             </tr>
           </tbody>
         </table>
-        <p class="mt-10"><strong>Signer:</strong> {{ response.signer }}</p>
+        <p class="mt-10"><strong>Signer:</strong> {{ txFunction.signer }}</p>
       </div>
     </Card>
   </div>
@@ -124,6 +124,8 @@ import AppButton from "@/components/common/AppButton.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
 import Card from "@/components/common/Card.vue";
 import { getTxFunction } from "@/services/turret/function";
+import TxFunction from "@/entities/TxFunction";
+import ITxFunction from "@/entities/ITxFunction";
 
 @Options({
   components: {
@@ -134,11 +136,14 @@ import { getTxFunction } from "@/services/turret/function";
 })
 export default class TxFunctions extends Vue {
   private txFunctionHash = "";
-  private response = null as unknown;
+  private txFunction = TxFunction.createNull();
 
-  async getFunction(): Promise<void> {
+  async getTxFunction(): Promise<void> {
     const turret = this.$store.state.turret;
-    this.response = await getTxFunction(turret, this.txFunctionHash);
+    this.txFunction = (await getTxFunction(
+      turret,
+      this.txFunctionHash
+    )) as ITxFunction;
   }
 }
 </script>
