@@ -67,7 +67,7 @@
               }}
             </AppButton>
 
-            <PaymentInfo :json="paymentResult" v-if="paymentResult" />
+            <PaymentInfo :payment="paymentResult" v-if="paymentResult" />
           </div>
         </form>
       </div>
