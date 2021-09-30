@@ -42,7 +42,7 @@
                   Public Key
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ json.publicKey }}
+                  {{ payment.publicKey }}
                 </td>
               </tr>
               <tr>
@@ -50,7 +50,7 @@
                   Payment Hash
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ json.paymentHash }}
+                  {{ payment.paymentHash }}
                 </td>
               </tr>
               <tr>
@@ -58,7 +58,7 @@
                   Last modified time
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ new Date(Number(json.lastModifiedTime)) }}
+                  {{ new Date(Number(payment.lastModifiedTime)) }}
                 </td>
               </tr>
               <tr>
@@ -66,7 +66,7 @@
                   Balance
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ json.balance }}
+                  {{ payment.balance }}
                 </td>
               </tr>
             </tbody>
@@ -79,11 +79,13 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+import { PropType } from "vue";
+import IPayment from "@/entities/IPayment";
 
 @Options({
   props: {
-    json: {
-      type: Object,
+    payment: {
+      type: Object as PropType<IPayment>,
       required: true,
     },
   },
