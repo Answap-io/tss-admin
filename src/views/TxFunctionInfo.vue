@@ -114,6 +114,7 @@
         </table>
         <p class="mt-10"><strong>Signer:</strong> {{ txFunction.signer }}</p>
       </div>
+      <JsonTreeView v-if="getTxFunctionError" :json="getTxFunctionError" />
     </Card>
   </div>
 </template>
@@ -126,24 +127,32 @@ import Card from "@/components/common/Card.vue";
 import { getTxFunction } from "@/services/turret/function";
 import TxFunction from "@/entities/TxFunction";
 import ITxFunction from "@/entities/ITxFunction";
+import JsonTreeView from "@/components/common/JsonTreeView.vue";
 
 @Options({
   components: {
     AppButton,
     AppInput,
     Card,
+    JsonTreeView,
   },
 })
 export default class TxFunctionInfo extends Vue {
   private txFunctionHash = "";
   private txFunction = TxFunction.createNull();
+  private getTxFunctionError = null;
 
   async getTxFunction(): Promise<void> {
+    this.getTxFunctionError = null;
     const turret = this.$store.state.turret;
-    this.txFunction = (await getTxFunction(
-      turret,
-      this.txFunctionHash
-    )) as ITxFunction;
+    try {
+      this.txFunction = (await getTxFunction(
+        turret,
+        this.txFunctionHash
+      )) as ITxFunction;
+    } catch (error) {
+      this.getTxFunctionError = error;
+    }
   }
 }
 </script>
