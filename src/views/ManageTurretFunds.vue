@@ -23,11 +23,11 @@
             }}
           </a>
         </p>
-        <AppButton @click="() => fetchTransactionFee()"
-          >{{ isFetching ? "Loading..." : "Fetch" }}
+        <AppButton @click="() => fetchTransactionFee()">
+          {{ isFetching ? "Loading..." : "Fetch" }}
         </AppButton>
 
-        <JsonTreeView v-if="fetchError" :json="fetchError" />
+        <p v-if="fetchError">{{ fetchError }}</p>
       </div>
       <div>
         <form @submit.prevent="() => {}">
@@ -66,12 +66,12 @@
                   : `Fund max (${$store.state.turret.fee.max} XLM)`
               }}
             </AppButton>
-
-            <PaymentInfo :payment="paymentResult" v-if="paymentResult" />
           </div>
         </form>
       </div>
     </div>
+    <PaymentInfo :payment="payment" v-if="payment.paymentHash !== ''" />
+    {{ paymentError }}
     <FeeBalanceInfo
       v-if="feeBalance.hash"
       :is-loading="isProcessingPayment"
@@ -89,7 +89,6 @@ import AppButton from "@/components/common/AppButton.vue";
 import FeeBalanceInfo from "@/components/turret/fee-balance/FeeBalanceInfo.vue";
 import XdrTokenForm from "@/components/turret/xdr-token/XdrTokenForm.vue";
 import AppInput from "@/components/common/form/AppInput.vue";
-import JsonTreeView from "@/components/common/JsonTreeView.vue";
 import PaymentInfo from "@/components/turret/payment/PaymentInfo.vue";
 import scrollToBottom from "@/helpers/domHelper";
 import IFeeBalance from "@/entities/IFeeBalance";
@@ -105,7 +104,6 @@ import {
 @Options({
   components: {
     FeeBalanceInfo,
-    JsonTreeView,
     AppInput,
     XdrTokenForm,
     AppButton,
@@ -115,8 +113,9 @@ import {
 export default class ManageTurretFunds extends Vue {
   private feeBalance: IFeeBalance = FeeBalance.createNull();
   private xdrToken = "";
-  private paymentResult: IPayment = Payment.createNull();
-  private fetchError = null;
+  private payment: IPayment = Payment.createNull();
+  private fetchError = "";
+  private paymentError = "";
   private isFetching = false;
   private isCreatingXdr = false;
   private isProcessingPayment = false;
@@ -138,14 +137,13 @@ export default class ManageTurretFunds extends Vue {
 
   async fetchTransactionFee(xdrToken?: string): Promise<void> {
     this.isFetching = true;
-    this.fetchError = null;
+    this.fetchError = "";
     this.feeBalance = FeeBalance.createNull();
 
     const turret = this.$store.state.turret;
     try {
       this.feeBalance = await getFeeBalance(turret, xdrToken ?? this.xdrToken);
     } catch (e) {
-      console.error(e);
       this.fetchError = e;
     }
 
@@ -158,31 +156,36 @@ export default class ManageTurretFunds extends Vue {
     amount: string
   ): Promise<void> {
     this.isProcessingPayment = true;
+    this.paymentError = "";
     const kp = this.$store.getters.keypair;
     const turret = this.$store.state.turret;
-    this.paymentResult = (await fundTurret(
-      turret,
-      kp.publicKey(),
-      kp,
-      amount
-    )) as IPayment;
+    try {
+      this.payment = await fundTurret(turret, kp.publicKey(), kp, amount);
+    } catch (e) {
+      this.paymentError = e;
+    }
+
     await this.fetchTransactionFee(xdrToken);
     this.isProcessingPayment = false;
+    await this.$nextTick(scrollToBottom);
   }
 
   async handleFundingPublicKey(amount: string): Promise<void> {
     this.isProcessingPayment = true;
-
-    this.paymentResult = (await fundTurret(
-      this.$store.state.turret,
-      this.publicKeyToFund,
-      this.$store.getters.keypair,
-      amount
-    )) as IPayment;
+    this.paymentError = "";
+    try {
+      this.payment = await fundTurret(
+        this.$store.state.turret,
+        this.publicKeyToFund,
+        this.$store.getters.keypair,
+        amount
+      );
+    } catch (e) {
+      this.paymentError = e;
+    }
 
     this.isProcessingPayment = false;
+    await this.$nextTick(scrollToBottom);
   }
 }
 </script>
-
-<style src="json-tree-view/devtools.css"></style>

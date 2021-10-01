@@ -11,6 +11,7 @@ import {
 } from "stellar-sdk";
 import IFeeBalance from "@/entities/IFeeBalance";
 import { getStellarPassphrase } from "@/helpers/stellarHelper";
+import IPayment from "@/entities/IPayment";
 
 export async function getTurret(url: string): Promise<Turret> {
   const responses = await Promise.all([
@@ -69,7 +70,7 @@ export async function fundTurret(
   fundedKeyPair: string,
   fundingKeyPair: Keypair,
   amount: string
-): Promise<unknown> {
+): Promise<IPayment> {
   const pk = fundingKeyPair.publicKey();
   const server = new Server(turret.horizon);
 
@@ -98,7 +99,11 @@ export async function fundTurret(
     }),
   });
 
-  return result.json();
+  if (!result.ok) {
+    throw new Error(await result.text());
+  }
+
+  return (await result.json()) as Promise<IPayment>;
 }
 
 export async function getFeeBalance(
@@ -112,7 +117,7 @@ export async function getFeeBalance(
   });
 
   if (!result.ok) {
-    throw new Error(await result.json());
+    throw new Error(await result.text());
   }
 
   return (await result.json()) as IFeeBalance;
