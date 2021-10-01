@@ -182,7 +182,7 @@ export default class ManageTurretFunds extends Vue {
         amount
       );
     } catch (e) {
-      this.paymentError = e;
+      this.paymentError = e instanceof TurretHttpError ? e.json : e;
     }
 
     this.isProcessingPayment = false;
