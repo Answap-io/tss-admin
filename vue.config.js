@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/tss-admin/'
+  publicPath: process.env.NODE_ENV === "production" ? "/tss-admin/" : "./",
 };
