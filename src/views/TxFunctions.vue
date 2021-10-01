@@ -30,6 +30,7 @@ import { getTxFunction } from "@/services/turret/function";
 import TxFunction from "@/entities/TxFunction";
 import JsonTreeView from "@/components/common/JsonTreeView.vue";
 import TurretFieldsTable from "@/components/turret/contracts/TurretFieldsTable.vue";
+import TurretHttpError from "@/errors/TurretHttpError";
 
 @Options({
   components: {
@@ -52,7 +53,8 @@ export default class TxFunctions extends Vue {
       this.txFunction = await getTxFunction(turret, this.txFunctionHash);
     } catch (error) {
       console.error(error);
-      this.getTxFunctionError = error;
+      this.getTxFunctionError =
+        error instanceof TurretHttpError ? error.json : error;
     }
   }
 }
