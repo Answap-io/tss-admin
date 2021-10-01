@@ -12,6 +12,7 @@ import {
 import IFeeBalance from "@/entities/IFeeBalance";
 import { getStellarPassphrase } from "@/helpers/stellarHelper";
 import IPayment from "@/entities/IPayment";
+import TurretHttpError from "@/errors/TurretHttpError";
 
 export async function getTurret(url: string): Promise<Turret> {
   const responses = await Promise.all([
@@ -100,7 +101,7 @@ export async function fundTurret(
   });
 
   if (!result.ok) {
-    throw new Error(await result.text());
+    throw new TurretHttpError(await result.text());
   }
 
   return (await result.json()) as Promise<IPayment>;
@@ -117,7 +118,7 @@ export async function getFeeBalance(
   });
 
   if (!result.ok) {
-    throw new Error(await result.text());
+    throw new TurretHttpError(await result.text());
   }
 
   return (await result.json()) as IFeeBalance;
