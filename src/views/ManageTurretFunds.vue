@@ -95,6 +95,7 @@ import IFeeBalance from "@/entities/IFeeBalance";
 import FeeBalance from "@/entities/FeeBalance";
 import Payment from "@/entities/Payment";
 import IPayment from "@/entities/IPayment";
+import TurretHttpError from "@/errors/TurretHttpError";
 import {
   fundTurret,
   generateXdr,
@@ -144,7 +145,7 @@ export default class ManageTurretFunds extends Vue {
     try {
       this.feeBalance = await getFeeBalance(turret, xdrToken ?? this.xdrToken);
     } catch (e) {
-      this.fetchError = e;
+      this.fetchError = e instanceof TurretHttpError ? e.json : e;
     }
 
     this.isFetching = false;
@@ -162,7 +163,7 @@ export default class ManageTurretFunds extends Vue {
     try {
       this.payment = await fundTurret(turret, kp.publicKey(), kp, amount);
     } catch (e) {
-      this.paymentError = e;
+      this.paymentError = e instanceof TurretHttpError ? e.json : e;
     }
 
     await this.fetchTransactionFee(xdrToken);
