@@ -64,7 +64,7 @@
                 >
                   Rule type
                 </th>
-                <th class="relative px-6 py-3" scope="col">
+                <th class="relative px-6 py-3" scope="col" v-if="showActions">
                   <span class="sr-only">Edit</span>
                   <span class="sr-only">Delete</span>
                 </th>
@@ -103,6 +103,7 @@
                   </span>
                 </td>
                 <td
+                  v-if="showActions"
                   class="
                     px-6
                     py-4
@@ -143,6 +144,11 @@ import Field from "@/entities/Contracts/Field";
   props: {
     fields: {
       type: Array as PropType<Field[]>,
+    },
+    showActions: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
 })
