@@ -1,5 +1,6 @@
 import Turret from "@/entities/Turret";
 import ITxFunction from "@/entities/ITxFunction";
+import TurretHttpError from "@/errors/TurretHttpError";
 
 export async function getTxFunction(
   turret: Turret,
@@ -8,7 +9,7 @@ export async function getTxFunction(
   const response = await fetch(`${turret.url}/tx-functions/${txFunctionHash}`);
 
   if (!response.ok) {
-    throw new Error(await response.text());
+    throw new TurretHttpError(await response.text());
   }
 
   const tmpFunction = await response.json();
