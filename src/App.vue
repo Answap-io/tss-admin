@@ -45,8 +45,10 @@
         <AppButton class="mr-2">View & Run functions</AppButton>
       </router-link>
     </div>
-    <router-view v-if="turret.turret" />
-    <p v-else>Waiting for turret information to be loaded</p>
+    <router-view v-if="turret.turret && $store.state.privateKey" />
+    <p v-else>
+      Waiting for turret information to be loaded and private key to be entered
+    </p>
   </div>
 </template>
 
