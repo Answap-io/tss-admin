@@ -127,7 +127,7 @@ export default class ManageTurretFunds extends Vue {
       const turret = this.$store.state.turret;
       const keyPair = this.$store.getters.keypair;
       this.isCreatingXdr = true;
-      this.xdrToken = await generateXdr(turret, keyPair, "true", 3600, []);
+      this.xdrToken = await generateXdr(turret, keyPair, "true", 3590, []);
       await this.fetchTransactionFee();
     } catch (e) {
       console.error(e);
